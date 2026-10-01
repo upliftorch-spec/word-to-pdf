@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="https://upliftorch.com/tools/word-to-pdf/en/">
+<link rel="alternate" hreflang="zh-TW" href="https://upliftorch.com/tools/word-to-pdf/">
+<link rel="alternate" hreflang="en" href="https://upliftorch.com/tools/word-to-pdf/en/">
+<link rel="alternate" hreflang="x-default" href="https://upliftorch.com/tools/word-to-pdf/en/">
+<title>Preview DOCX and Print to PDF Online | Upliftorch</title>
+<meta name="description" content="Preview a DOCX in your browser, then use Print / Save as PDF to make a PDF. No file upload or account. Supports DOCX files up to 50 MB.">
+<meta name="keywords" content="Word to PDF,DOCX to PDF,Word converter,online converter,free converter,document converter">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+<meta property="og:title" content="Preview DOCX and Print to PDF Online | Upliftorch">
+<meta property="og:description" content="Preview a DOCX locally and use your browser's Save as PDF option. No document upload.">
+<meta property="og:type" content="website">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f4f8;--surface:#fff;--text:#1e293b;--text-secondary:#64748b;
+  --border:#e2e8f0;--primary:#8b5cf6;--primary-dark:#7c3aed;
+  --primary-light:rgba(139,92,246,.1);--radius:14px;
+  --shadow:0 2px 12px rgba(0,0,0,.06);--danger:#ef4444;--success:#22c55e;
+  --header-bg:linear-gradient(135deg,#6d28d9,#8b5cf6,#a78bfa);
+}
+[data-theme="dark"]{
+  --bg:#0f172a;--surface:#1e293b;--text:#e2e8f0;--text-secondary:#94a3b8;
+  --border:#334155;--primary:#a78bfa;--primary-dark:#c4b5fd;
+  --primary-light:rgba(139,92,246,.15);--shadow:0 2px 16px rgba(0,0,0,.3);
+  --header-bg:linear-gradient(135deg,#4c1d95,#6d28d9,#7c3aed);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
+
+header{background:var(--header-bg);color:#fff;padding:0 20px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.brand span{opacity:.85;font-weight:400}
+.header-actions{display:flex;align-items:center;gap:12px}
+.lang-switch{color:#fff;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:8px;font-size:13px;font-weight:600;transition:.2s}
+.lang-switch:hover{background:rgba(255,255,255,.35);text-decoration:none}
+.theme-toggle{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:18px;transition:.2s}
+.theme-toggle:hover{background:rgba(255,255,255,.35)}
+
+.container{max-width:960px;margin:0 auto;padding:32px 20px}
+.breadcrumb{font-size:13px;color:var(--text-secondary,#64748b);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.breadcrumb a{color:var(--text-secondary,#64748b)}
+.breadcrumb a:hover{color:var(--primary,#ec4899)}
+.breadcrumb .sep{opacity:.5}
+.breadcrumb [aria-current]{color:var(--text,#1e293b);font-weight:600}
+.tool-intro{margin:0 0 24px}.tool-intro h1{font-size:clamp(26px,4vw,36px);line-height:1.2;margin-bottom:8px}.tool-intro p{color:var(--text-secondary)}
+.related-tools{margin:32px 0}.related-tools h2{font-size:20px;margin-bottom:8px}.related-tools a{margin-right:16px}
+
+.upload-area{border:2.5px dashed var(--border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:.3s;background:var(--surface)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--primary);background:var(--primary-light)}
+.upload-area .icon{font-size:48px;margin-bottom:12px}
+.upload-area h2{font-size:20px;margin-bottom:8px}
+.upload-area p{color:var(--text-secondary);font-size:14px}
+#fileInput{display:none}
+
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:24px 0;padding:20px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{opacity:.9}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-sm{padding:6px 14px;font-size:13px;border-radius:8px}
+
+.preview-area{margin-top:16px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.preview-header{padding:12px 20px;border-bottom:1px solid var(--border);font-weight:600;font-size:14px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center}
+.preview-content{padding:32px;min-height:200px;font-size:15px;line-height:1.8}
+.preview-content h1,.preview-content h2,.preview-content h3{margin:16px 0 8px;color:var(--text)}
+.preview-content p{margin-bottom:12px}
+.preview-content table{border-collapse:collapse;width:100%;margin:12px 0}
+.preview-content td,.preview-content th{border:1px solid var(--border);padding:8px 12px;text-align:left}
+.preview-content img{max-width:100%;height:auto}
+
+.status-msg{text-align:center;padding:20px;color:var(--text-secondary);font-size:15px}
+.status-msg.error{color:var(--danger)}
+
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:40px 0}
+.feature-card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);text-align:center}
+.feature-card .feat-icon{font-size:36px;margin-bottom:12px}
+.feature-card h3{font-size:16px;margin-bottom:8px}
+.feature-card p{font-size:14px;color:var(--text-secondary)}
+
+.faq{margin:40px 0}
+.faq h2{font-size:22px;margin-bottom:20px;text-align:center}
+.faq-item{background:var(--surface);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden}
+.faq-q{padding:16px 20px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.faq-q::after{content:"▼";font-size:12px;color:var(--text-secondary);transition:.3s}
+.faq-item.open .faq-q::after{transform:rotate(180deg)}
+.faq-a{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;font-size:14px;color:var(--text-secondary)}
+.faq-item.open .faq-a{padding:0 20px 16px;max-height:300px}
+
+.articles{margin:40px 0}
+.articles h2{font-size:22px;margin-bottom:20px;text-align:center}
+.article-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.article-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s;display:block;border:1px solid var(--border)}
+.article-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1);text-decoration:none}
+.article-card h3{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.article-card p{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.article-card .tag{display:inline-block;font-size:11px;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:4px;margin-top:10px;font-weight:600}
+footer{border-top:1px solid var(--border);padding:24px 20px;text-align:center;font-size:13px;color:var(--text-secondary);margin-top:40px}
+footer nav a{color:var(--text-secondary);margin:0 6px}footer nav a:hover{color:var(--primary)}
+
+.hidden{display:none!important}
+
+@media print{
+  body > :not(.container),.container > :not(.preview-area),.preview-header{display:none!important}
+  .container{max-width:none;margin:0;padding:0}
+  .preview-area{box-shadow:none;border-radius:0}
+  .preview-content{padding:0}
+  body{background:#fff;color:#000}
+  :root,:root[data-theme="dark"]{--text:#000;--border:#bbb;--surface:#fff}
+}
+
+@media(max-width:767px){
+  .feature-grid{grid-template-columns:1fr}
+  .controls{flex-direction:column;align-items:stretch}
+  .preview-content{padding:16px}
+  .article-grid{grid-template-columns:1fr}
+}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"DOCX Preview and Print to PDF","url":"https://upliftorch.com/tools/word-to-pdf/en/","description":"Preview a DOCX in your browser and save it as a PDF using the browser print dialog","applicationCategory":"UtilityApplication","operatingSystem":"All","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://upliftorch.com/"},{"@type":"ListItem","position":2,"name":"Free Online Tools","item":"https://upliftorch.com/tools-en"},{"@type":"ListItem","position":3,"name":"Word to PDF","item":"https://upliftorch.com/tools/word-to-pdf/en/"}]}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">📝 Word<span>toPDF</span></div>
+    <div class="header-actions">
+      <a href="https://upliftorch.com/tools/word-to-pdf/" class="lang-switch">繁中</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="https://upliftorch.com/">Home</a>
+    <span class="sep">›</span>
+    <a href="https://upliftorch.com/tools-en">Free Online Tools</a>
+    <span class="sep">›</span>
+    <span aria-current="page">Word to PDF</span>
+  </nav>
+
+  <section class="tool-intro">
+    <h1>Preview a DOCX and print it to PDF</h1>
+    <p>Open a Word .docx file locally, check the preview, then choose Save as PDF in your browser's print dialog. Complex Word layouts may change.</p>
+  </section>
+
+  <div class="upload-area" id="uploadArea">
+    <div class="icon">📝</div>
+    <h2>Drag & drop a Word file here, or click to select</h2>
+    <p>.docx files up to 50 MB. Large documents may need more device memory.</p>
+    <input type="file" id="fileInput" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+  </div>
+
+  <div class="controls hidden" id="controls">
+    <div style="display:flex;gap:8px;align-items:center;flex:1">
+      <span id="fileName" style="font-weight:600;font-size:14px"></span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" id="printBtn">🖨️ Print / Save as PDF</button>
+      <button class="btn btn-danger btn-sm" id="clearBtn">✕ Clear</button>
+    </div>
+  </div>
+
+  <div class="status-msg hidden" id="statusMsg" role="status" aria-live="polite"></div>
+
+  <div class="preview-area hidden" id="previewArea">
+    <div class="preview-header">
+      <span>Document Preview</span>
+      <span style="font-weight:400;font-size:12px">Use browser print to save as PDF</span>
+    </div>
+    <div class="preview-content" id="previewContent"></div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>
+      <h3>100% Private</h3>
+      <p>All conversion happens locally in your browser. No files are ever uploaded to any server.</p>
+    </div>
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+      <h3>Instant Preview</h3>
+      <p>Preview document content immediately after upload, verify before converting.</p>
+    </div>
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><path d="M6 2h8l4 4v16H6V2Z"/><path d="M14 2v5h5M9 12h6M9 16h6"/></svg>
+      <h3>Basic Formatting Preview</h3>
+      <p>Check text, headings and basic tables before printing. Complex layouts and page breaks may change.</p>
+    </div>
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>
+      <h3>Print to PDF</h3>
+      <p>Uses native browser print function. Select "Save as PDF" as your printer.</p>
+    </div>
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 5h4M11 18.5h2"/></svg>
+      <h3>Mobile Friendly</h3>
+      <p>Preview documents on a phone or tablet; available Save as PDF options depend on your browser and device.</p>
+    </div>
+    <div class="feature-card">
+      <svg class="feat-icon" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-left:auto;margin-right:auto;color:var(--primary,var(--primary-color,#0f86b5))"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.6-1.7M12 14v2M19 3v3M17.5 4.5h3"/></svg>
+      <h3>Free to Use</h3>
+      <p>No registration or watermark. Files are limited to 50 MB, and previewing depends on your device's memory.</p>
+    </div>
+  </div>
+
+  <div class="articles">
+    <h2>Related Articles</h2>
+    <div class="article-grid">
+      <a href="https://upliftorch.com/tools/word-to-pdf/en/blog/docx-format-explained.html" class="article-card">
+        <h3>DOCX Format: Understanding Office Open XML</h3>
+        <p>Explore the internal structure of DOCX files and how the Office Open XML standard organizes document content, styles, and media resources.</p>
+        <span class="tag">Technical</span>
+      </a>
+      <a href="https://upliftorch.com/tools/word-to-pdf/en/blog/document-conversion-tips.html" class="article-card">
+        <h3>Common Document Conversion Issues and Solutions</h3>
+        <p>Missing fonts, broken layouts, blurry images? Master the most common document conversion problems and their solutions.</p>
+        <span class="tag">Tips</span>
+      </a>
+      <a href="https://upliftorch.com/tools/word-to-pdf/en/blog/pdf-vs-docx.html" class="article-card">
+        <h3>PDF vs DOCX: When to Use Which?</h3>
+        <p>The two most common document formats each have their strengths. Choose the right format for your specific needs and scenarios.</p>
+        <span class="tag">Comparison</span>
+      </a>
+      <a href="https://upliftorch.com/tools/word-to-pdf/en/blog/print-friendly-documents.html" class="article-card">
+        <h3>How to Create Print-Friendly Documents</h3>
+        <p>From margin settings to font selection, from color management to page break control — a complete guide to achieving perfect print results.</p>
+        <span class="tag">Print Guide</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Will the PDF match my Word document exactly?</div><div class="faq-a">Not necessarily. This tool turns DOCX content into a browser preview before printing. Basic text, headings and tables may carry over, but fonts, page breaks, headers, footers and complex layouts can change. Check the preview and the saved PDF before sharing it.</div></div>
+    <div class="faq-item"><div class="faq-q">Are my documents uploaded anywhere?</div><div class="faq-a">No. All processing happens entirely in your browser. Your documents never leave your device, ensuring complete privacy and security.</div></div>
+    <div class="faq-item"><div class="faq-q">Is .doc format supported?</div><div class="faq-a">Currently only .docx (Word 2007+) is supported. For older .doc files, please convert to .docx using Word or LibreOffice first.</div></div>
+    <div class="faq-item"><div class="faq-q">How do I save as PDF?</div><div class="faq-a">Click "Print / Save as PDF", then select "Save as PDF" or "Microsoft Print to PDF" in the print dialog. This tool does not directly download a PDF; the available option depends on your browser and device.</div></div>
+    <div class="faq-item"><div class="faq-q">Do images and tables display correctly?</div><div class="faq-a">Embedded images and basic tables usually display correctly. However, highly customized formatting (text wrapping around images, complex merged cells) may need manual adjustment.</div></div>
+  </div>
+
+  <nav class="related-tools" aria-label="Related PDF tools">
+    <h2>Related PDF tools</h2>
+    <a href="https://upliftorch.com/tools/pdf-merge/en/">Merge PDF files in your browser</a>
+    <a href="https://upliftorch.com/tools/pdf-to-jpg/en/">Convert PDF pages to JPG or PNG</a>
+  </nav>
+
+</div>
+
+<footer>
+  <nav>
+    <a href="index.html">Home</a> ·
+    <a href="https://upliftorch.com/tools/word-to-pdf/en/blog/index.html">Blog</a> ·
+    <a href="https://upliftorch.com/privacy-policy?lang=en">Privacy</a> ·
+    <a href="https://upliftorch.com/terms-of-service?lang=en">Terms</a>
+  </nav>
+  <p style="margin-top:8px">Word to PDF Converter — all processing in browser, no files uploaded</p>
+  <p style="margin-top:4px;font-size:12px">&copy; <script>document.write(new Date().getFullYear())</script> Upliftorch. All rights reserved.</p>
+  <p style="margin-top:8px;font-size:13px">
+    <span style="color:#999">Other Tools: </span>
+    <a href="https://upliftorch.com/tools/image-compress/">Image Compress</a> ·
+    <a href="https://upliftorch.com/tools/pdf-to-jpg/en/">PDF to JPG</a> ·
+    <a href="https://upliftorch.com/tools/heic-to-jpg/">HEIC to JPG</a> ·
+    <a href="https://upliftorch.com/tools/video-to-gif/">Video to GIF</a>
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script>
+/* Dark Mode */
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.setAttribute('data-theme', 'dark');
+  themeToggle.textContent = '☀️';
+}
+themeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  themeToggle.textContent = isDark ? '🌙' : '☀️';
+});
+
+/* State */
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const controls = document.getElementById('controls');
+const fileNameEl = document.getElementById('fileName');
+const printBtn = document.getElementById('printBtn');
+const clearBtn = document.getElementById('clearBtn');
+const statusMsg = document.getElementById('statusMsg');
+const previewArea = document.getElementById('previewArea');
+const previewContent = document.getElementById('previewContent');
+
+/* Upload */
+uploadArea.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) loadDocx(e.target.files[0]);
+});
+uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) loadDocx(e.dataTransfer.files[0]);
+});
+
+async function loadDocx(file) {
+  controls.classList.add('hidden');
+  previewArea.classList.add('hidden');
+  previewContent.innerHTML = '';
+  fileInput.value = '';
+  statusMsg.classList.remove('hidden', 'error');
+  if (!file.name.toLowerCase().endsWith('.docx')) {
+    statusMsg.textContent = 'Please upload a .docx file';
+    statusMsg.classList.add('error');
+  } else if (file.size > 50 * 1024 * 1024) {
+    statusMsg.textContent = 'This DOCX exceeds the 50 MB limit. Choose a smaller file.';
+    statusMsg.classList.add('error');
+  } else {
+    statusMsg.textContent = 'Parsing document...';
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      previewContent.innerHTML = result.value;
+      previewArea.classList.remove('hidden');
+      controls.classList.remove('hidden');
+      fileNameEl.textContent = file.name;
+      statusMsg.classList.add('hidden');
+    } catch (error) {
+      console.error(error);
+      statusMsg.textContent = 'This DOCX could not be opened. It may be damaged or unsupported. Choose another file.';
+      statusMsg.classList.add('error');
+    }
+  }
+}
+
+/* Print */
+printBtn.addEventListener('click', () => {
+  window.print();
+});
+
+/* Clear */
+clearBtn.addEventListener('click', () => {
+  controls.classList.add('hidden');
+  previewArea.classList.add('hidden');
+  previewContent.innerHTML = '';
+  statusMsg.classList.add('hidden');
+});
+
+/* FAQ Toggle */
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+});
+</script>
+
+
+<script>document.querySelectorAll(".current-year").forEach(function (el) { el.textContent = new Date().getFullYear(); });</script>
+
+<footer class="open-source-attribution" style="padding:24px;text-align:center"><a href="https://upliftorch.com/">Upliftorch</a> · <a href="https://upliftorch.com/tools/word-to-pdf/">Official demo / 線上工具</a></footer>
+</body>
+</html>
